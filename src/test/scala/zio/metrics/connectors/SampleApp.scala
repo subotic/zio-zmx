@@ -37,14 +37,14 @@ object ZmxSampleApp extends ZIOAppDefault with InstrumentedSample {
       .collectZIO[Request] { case Method.GET -> !! / "metrics" =>
         ZIO.serviceWithZIO[PrometheusPublisher](_.get.map(Response.text))
       }
-    
+
   private lazy val insightsRouter =
     Http
     .collectZIO[Request] { case Method.GET -> !! / "ws" =>
-      
+
       }
 
-  private val server = Server.port(bindPort) ++ Server.app(static ++ prometheusRouter ++ insightsRouter)
+  private val server = Server.port(bindPort) ++ Server.app(static ++ prometheusRouter)
 
   private lazy val runHttp = (server.start *> ZIO.never).forkDaemon
 
@@ -73,7 +73,6 @@ object ZmxSampleApp extends ZIOAppDefault with InstrumentedSample {
       newrelic.newRelicLayer,
 
       // The insights reporting layer
-      ZLayer.succeed(InsightsConfig("127.0.0.1", 8089)),
       insights.insightsLayer,
 
       // Enable the ZIO internal metrics and the default JVM metricsConfig
