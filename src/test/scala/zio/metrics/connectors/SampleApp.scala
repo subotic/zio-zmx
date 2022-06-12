@@ -1,6 +1,7 @@
 package zio.metrics.connectors
 
 import zio._
+import zio.metrics.connectors.insights.InsightsConfig
 import zio.metrics.connectors.newrelic.NewRelicConfig
 import zio.metrics.connectors.prometheus.PrometheusPublisher
 import zio.metrics.connectors.statsd.StatsdConfig
@@ -24,6 +25,7 @@ object ZmxSampleApp extends ZIOAppDefault with InstrumentedSample {
       |<title>Simple Server</title>
       |<body>
       |<p><a href="/metrics">Metrics</a></p>
+      |<p><a href="/ws">Insights Websocket Server</a></p>
       |</body
       |</html>""".stripMargin
 
@@ -35,8 +37,14 @@ object ZmxSampleApp extends ZIOAppDefault with InstrumentedSample {
       .collectZIO[Request] { case Method.GET -> !! / "metrics" =>
         ZIO.serviceWithZIO[PrometheusPublisher](_.get.map(Response.text))
       }
+    
+  private lazy val insightsRouter =
+    Http
+    .collectZIO[Request] { case Method.GET -> !! / "ws" =>
+      
+      }
 
-  private val server = Server.port(bindPort) ++ Server.app(static ++ prometheusRouter)
+  private val server = Server.port(bindPort) ++ Server.app(static ++ prometheusRouter ++ insightsRouter)
 
   private lazy val runHttp = (server.start *> ZIO.never).forkDaemon
 
@@ -63,6 +71,10 @@ object ZmxSampleApp extends ZIOAppDefault with InstrumentedSample {
       // The NewRelic reporting layer
       NewRelicConfig.fromEnvEULayer,
       newrelic.newRelicLayer,
+
+      // The insights reporting layer
+      ZLayer.succeed(InsightsConfig("127.0.0.1", 8089)),
+      insights.insightsLayer,
 
       // Enable the ZIO internal metrics and the default JVM metricsConfig
       // Do NOT forget the .unit for the JVM metrics layer
