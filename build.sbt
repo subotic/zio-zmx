@@ -46,12 +46,13 @@ lazy val root =
       cancelable := true,
       stdSettings("zio.metrics.connectors"),
       libraryDependencies ++= Seq(
-        "dev.zio" %% "zio"          % Version.zio,
-        "dev.zio" %% "zio-json"     % Version.zioJson,
-        "dev.zio" %% "zio-streams"  % Version.zio,
-        "io.d11"  %% "zhttp"        % Version.zioHttp,
-        "dev.zio" %% "zio-test"     % Version.zio % Test,
-        "dev.zio" %% "zio-test-sbt" % Version.zio % Test,
+        "dev.zio"     %% "zio"          % Version.zio,
+        "dev.zio"     %% "zio-json"     % Version.zioJson,
+        "dev.zio"     %% "zio-streams"  % Version.zio,
+        "io.d11"      %% "zhttp"        % Version.zioHttp,
+        "dev.zio"     %% "zio-test"     % Version.zio % Test,
+        "dev.zio"     %% "zio-test-sbt" % Version.zio % Test,
+        "com.lihaoyi" %% "upickle"      % Version.upickle,
       ),
     )
     .settings(buildInfoSettings("zio.metrics.connectors"))

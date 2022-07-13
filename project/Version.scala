@@ -7,4 +7,5 @@ object Version {
   val zio     = "2.0.0-RC6"
   val zioJson = "0.3.0-RC4"
   val zioHttp = "2.0.0-RC9"
+  val upickle = "1.6.0"
 }

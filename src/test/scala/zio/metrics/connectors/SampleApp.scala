@@ -38,7 +38,7 @@ object ZmxSampleApp extends ZIOAppDefault with InstrumentedSample {
         ZIO.serviceWithZIO[PrometheusPublisher](_.get.map(Response.text))
       }
 
-  private lazy val insightsRouter =
+  private lazy val insightRouter =
     Http
     .collectZIO[Request] { case Method.GET -> !! / "ws" =>
 
